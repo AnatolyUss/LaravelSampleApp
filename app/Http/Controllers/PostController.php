@@ -21,8 +21,12 @@ class PostController extends Controller
                 'user_id' => $request->input('user_id'),
                 'title' => $request->input('title'),
                 'body' => $request->input('body'),
+
                 'limit' => $request->input('limit'),
                 'offset' => $request->input('offset'),
+
+                'orderField' => $request->input('orderField'),
+                'orderDirection' => $request->input('orderDirection'),
             ];
 
             $searchResult = (new Post)->search($searchParameters);
@@ -50,7 +54,7 @@ class PostController extends Controller
                 'user_id' => ['required', 'numeric'],
             ]);
 
-            $post = Post::create([
+            $post = Post::create([ // TODO: implement within the model.
                 'title' => $request->input('title'),
                 'body' => $request->input('body'),
                 'user_id' => $request->input('user_id'),

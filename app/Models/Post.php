@@ -85,6 +85,8 @@ class Post extends Model
             $query->where('user_id', $queryParameters['user_id']);
         }
 
+        // TODO: implement full-text-search by title and body.
+
         return runPaginatedQuery($query, $queryParameters);
     }
 
