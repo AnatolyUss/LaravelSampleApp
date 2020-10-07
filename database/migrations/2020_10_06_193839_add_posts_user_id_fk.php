@@ -11,7 +11,7 @@ class AddPostsUserIdFk extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false);
@@ -28,7 +28,7 @@ class AddPostsUserIdFk extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('posts', function (Blueprint $table) {
             $table->dropForeign('posts_user_id_foreign');

@@ -16,7 +16,8 @@ if (!function_exists('wrapControllerAction')) {
      * @param callable $actionCallback
      * @return JsonResponse
      */
-    function wrapControllerAction(callable $actionCallback): JsonResponse {
+    function wrapControllerAction(callable $actionCallback): JsonResponse
+    {
         /**
          * Simplified exceptions handler.
          *
@@ -24,7 +25,8 @@ if (!function_exists('wrapControllerAction')) {
          * @param int $statusCode
          * @return JsonResponse
          */
-        $simplifiedExceptionHandler = function (\Exception $exception, int $statusCode): JsonResponse {
+        $simplifiedExceptionHandler = function (\Exception $exception, int $statusCode): JsonResponse
+        {
             return response()->json($exception->getMessage(), $statusCode);
         };
 
