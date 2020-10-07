@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
@@ -21,8 +23,23 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
+        QueryBuilder::macro('toRawSql', function () {
+            $parametrizedRawSql = $this->toSql();
+            $sqlBindings = $this->getBindings();
+
+            return array_reduce($sqlBindings, function ($sql, $binding) {
+                $pattern = '/\?/';
+                $replacement = is_numeric($binding) ? $binding : "'" . $binding . "'";
+                $limit = 1;
+
+                return preg_replace($pattern, $replacement, $sql, $limit);
+            }, $parametrizedRawSql);
+        });
+
+        EloquentBuilder::macro('toRawSql', function () {
+            return $this->getQuery()->toRawSql();
+        });
     }
 }

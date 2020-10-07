@@ -51,28 +51,50 @@ class Post extends Model
      * @param int $userId
      * @return Post[]
      */
-    public function searchByUserId(int $userId): array
-    {
-        //
-    }
+//    public function searchByUserId(int $userId): array
+//    {
+//        //
+//    }
 
     /**
      * Returns all the matching posts, that contain given string in post body or in title.
      *
-     * @param $string
+     * @param string $content
      * @return Post[]
      */
-    public function searchByContent(string $string): array
+//    public function searchByContent(string $content): array
+//    {
+//        //
+//    }
+
+    /**
+     * Returns all the matching posts, that contain given string in post body or in title.
+     * !!!Notice, there is no need to implement searchByUserId(int $userId) and searchByContent(string $content)
+     * as separate methods, since it is easy to combine this functionality in one single method
+     * search(array $searchParameters).
+     * This approach seems to be more generic.
+     *
+     * @param array $queryParameters
+     * @return array
+     */
+    public function search(array $queryParameters): array
     {
-        //
+        $query = Post::query();
+
+        if (isset($queryParameters['user_id'])) {
+            $query->where('user_id', $queryParameters['user_id']);
+        }
+
+        return runPaginatedQuery($query, $queryParameters);
     }
 
     /**
      * Return the average number of posts users created monthly and weekly.
      *
+     * @param array $searchParameters
      * @return array
      */
-    public function getAveragePostsByUser(): array
+    public function getAveragePostsByUser(array $searchParameters): array
     {
         //
     }

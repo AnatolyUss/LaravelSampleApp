@@ -11,11 +11,28 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request  $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        //
+        return wrapControllerAction(function() use ($request) {
+            $searchParameters = [
+                'user_id' => $request->input('user_id'),
+                'title' => $request->input('title'),
+                'body' => $request->input('body'),
+                'limit' => $request->input('limit'),
+                'offset' => $request->input('offset'),
+            ];
+
+            $searchResult = (new Post)->search($searchParameters);
+
+            return response()->json(
+                $searchResult['dataCollection'],
+                200,
+                ['X-Total-Count' => $searchResult['dataCount']]
+            );
+        });
     }
 
     /**
