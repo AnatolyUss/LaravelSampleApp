@@ -17,6 +17,13 @@ if (!function_exists('wrapControllerAction')) {
      * @return JsonResponse
      */
     function wrapControllerAction(callable $actionCallback): JsonResponse {
+        /**
+         * Simplified exceptions handler.
+         *
+         * @param Exception $exception
+         * @param int $statusCode
+         * @return JsonResponse
+         */
         $simplifiedExceptionHandler = function (\Exception $exception, int $statusCode): JsonResponse {
             return response()->json($exception->getMessage(), $statusCode);
         };

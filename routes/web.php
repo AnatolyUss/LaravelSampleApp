@@ -14,7 +14,6 @@ use App\Http\Controllers\PostController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::prefix('api')->group(function () {
     Route::resources([
         'users' => UserController::class,

@@ -22,7 +22,7 @@ class Post extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'body'];
+    protected $fillable = ['title', 'body', 'user_id'];
 
     /**
      * Get the posts of the user.
@@ -42,7 +42,7 @@ class Post extends Model
      */
     public function searchById(int $postId)
     {
-        return Post::findById($postId);
+        return Post::find($postId);
     }
 
     /**

@@ -18,8 +18,8 @@ class UserController extends Controller
     {
         return wrapControllerAction(function() use ($request) {
             $this->validate($request, [
-                'name' => ['required', 'max:255'],
-                'email' => ['required', 'email'],
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email'],
             ]);
 
             $user = User::create([
