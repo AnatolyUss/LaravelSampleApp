@@ -30,4 +30,20 @@ class UserController extends Controller
             return response()->json($user, 201);
         });
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Request  $request
+     * @param  int  $id
+     * @return JsonResponse
+     */
+    public function show(Request $request, int $id): JsonResponse
+    {
+        return wrapControllerAction(function() use ($request, $id) {
+            // !!!Notice, the $id is validated by Laravel automatically.
+            $post = (new User)->searchById($id);
+            return response()->json($post, 200);
+        });
+    }
 }

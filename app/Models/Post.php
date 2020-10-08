@@ -53,7 +53,7 @@ class Post extends Model
      */
     public function searchById(int $postId)
     {
-        return Post::find($postId);
+        return static::find($postId);
     }
 
     /**

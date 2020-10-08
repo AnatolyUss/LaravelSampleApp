@@ -17,19 +17,27 @@ if (!function_exists('runPaginatedQuery')) {
      */
     function runPaginatedQuery(EloquentBuilder $builder, array $queryParameters): array
     {
-        $defaultQueryPageLimit = 5;
+        $defaultPageLimit = 5;
+        $defaultPageOffset = 0;
+        $defaultOrderField = 'id';
+        $defaultOrderDirection = 'asc';
+
         $limit = isset($searchParameters['limit'])
             ? $queryParameters['limit']
-            : env('DB_DEFAULT_QUERY_LIMIT', $defaultQueryPageLimit);
+            : env('DB_DEFAULT_QUERY_LIMIT', $defaultPageLimit);
 
-        $offset = isset($queryParameters['offset']) ? $queryParameters['offset'] : 0;
-        $orderField = isset($queryParameters['orderField']) ? $queryParameters['orderField'] : 'id';
-        $orderDirection = isset($queryParameters['orderDirection']) ? $queryParameters['orderDirection'] : 'asc';
+        $offset = isset($queryParameters['offset']) ? $queryParameters['offset'] : $defaultPageOffset;
 
-        $clonedBuilder = clone $builder;
+        $orderField = isset($queryParameters['orderField']) ? $queryParameters['orderField'] : $defaultOrderField;
+
+        $orderDirection = isset($queryParameters['orderDirection'])
+            ? $queryParameters['orderDirection']
+            : $defaultOrderDirection;
+
+        $countBuilder = clone $builder;
         $sqlCount = 'SELECT COUNT(1) AS count FROM(%s) AS data;';
-        $rawSqlQuery = sprintf($sqlCount, $clonedBuilder->toRawSql());
-        $countResult = DB::select($rawSqlQuery);
+        $rawSqlCountQuery = sprintf($sqlCount, $countBuilder->toRawSql());
+        $countResult = DB::select($rawSqlCountQuery);
 
         $dataCollection = $builder
             ->orderBy($orderField, $orderDirection)

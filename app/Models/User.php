@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use phpDocumentor\Reflection\Types\Static_;
 
 class User extends Authenticatable
 {
@@ -68,5 +67,16 @@ class User extends Authenticatable
     public function createUser(array $parameters): User
     {
         return static::create($parameters);
+    }
+
+    /**
+     * Returns a user with given id, if exists.
+     *
+     * @param int $userId
+     * @return mixed
+     */
+    public function searchById(int $userId)
+    {
+        return static::find($userId);
     }
 }
