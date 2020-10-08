@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use phpDocumentor\Reflection\Types\Static_;
 
 class User extends Authenticatable
 {
@@ -56,5 +57,16 @@ class User extends Authenticatable
     public function posts(): HasMany
     {
         return $this->hasMany('App\Models\Post');
+    }
+
+    /**
+     * Creates a new user.
+     *
+     * @param array $parameters
+     * @return User
+     */
+    public function createUser(array $parameters): User
+    {
+        return static::create($parameters);
     }
 }

@@ -22,9 +22,9 @@ class UserController extends Controller
                 'email' => ['required', 'string', 'email'],
             ]);
 
-            $user = User::create([ // TODO: implement within the model.
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
+            $user = (new User)->createUser([
+                'name' => $request->post('name'),
+                'email' => $request->post('email'),
             ]);
 
             return response()->json($user, 201);

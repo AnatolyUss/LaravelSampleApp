@@ -35,6 +35,17 @@ class Post extends Model
     }
 
     /**
+     * Creates a new post.
+     *
+     * @param array $parameters
+     * @return Post
+     */
+    public function createPost(array $parameters): Post
+    {
+        return static::create($parameters);
+    }
+
+    /**
      * Returns a post with given id, if exists.
      *
      * @param int $postId

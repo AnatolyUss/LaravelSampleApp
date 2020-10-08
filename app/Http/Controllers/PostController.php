@@ -18,15 +18,15 @@ class PostController extends Controller
     {
         return wrapControllerAction(function() use ($request) {
             $searchParameters = [
-                'user_id' => $request->input('user_id'),
-                'title' => $request->input('title'),
-                'body' => $request->input('body'),
+                'user_id' => $request->query('user_id'),
+                'title' => $request->query('title'),
+                'body' => $request->query('body'),
 
-                'limit' => $request->input('limit'),
-                'offset' => $request->input('offset'),
+                'limit' => $request->query('limit'),
+                'offset' => $request->query('offset'),
 
-                'orderField' => $request->input('orderField'),
-                'orderDirection' => $request->input('orderDirection'),
+                'orderField' => $request->query('orderField'),
+                'orderDirection' => $request->query('orderDirection'),
             ];
 
             $searchResult = (new Post)->search($searchParameters);
@@ -54,10 +54,10 @@ class PostController extends Controller
                 'user_id' => ['required', 'numeric'],
             ]);
 
-            $post = Post::create([ // TODO: implement within the model.
-                'title' => $request->input('title'),
-                'body' => $request->input('body'),
-                'user_id' => $request->input('user_id'),
+            $post = (new Post)->createPost([
+                'title' => $request->post('title'),
+                'body' => $request->post('body'),
+                'user_id' => $request->post('user_id'),
             ]);
 
             return response()->json($post, 201);
