@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
@@ -25,6 +26,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (env('APP_DEBUG', true)) {
+            DB::listen(function ($query) {
+                var_dump([
+                    $query->sql,
+                    $query->bindings,
+                    $query->time
+                ]);
+            });
+        }
+
         QueryBuilder::macro('toRawSql', function () {
             $parametrizedRawSql = $this->toSql();
             $sqlBindings = $this->getBindings();

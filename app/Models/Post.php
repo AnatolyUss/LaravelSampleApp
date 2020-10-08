@@ -57,31 +57,10 @@ class Post extends Model
     }
 
     /**
-     * Returns all posts that belong to given user, if exists.
-     *
-     * @param int $userId
-     * @return Post[]
-     */
-//    public function searchByUserId(int $userId): array
-//    {
-//        //
-//    }
-
-    /**
-     * Returns all the matching posts, that contain given string in post body or in title.
-     *
-     * @param string $content
-     * @return Post[]
-     */
-//    public function searchByContent(string $content): array
-//    {
-//        //
-//    }
-
-    /**
-     * Returns all the matching posts, that contain given string in post body or in title.
+     * Returns all the matching posts, that contain a string, specified in the "full-text-search"
+     * query-string parameter, in post's body or in post's title.
      * !!!Notice, there is no need to implement searchByUserId(int $userId) and searchByContent(string $content)
-     * as separate methods, since it is easy to combine this functionality in one single method
+     * as separate methods, since it is easy to combine this functionality in one single method -
      * search(array $searchParameters).
      * This approach seems to be more generic.
      *
@@ -96,7 +75,17 @@ class Post extends Model
             $query->where('user_id', $queryParameters['user_id']);
         }
 
-        // TODO: implement full-text-search by title and body.
+        if (isset($queryParameters['full-text-search'])) {
+            // Searches for given string in post's title and body.
+            $searchParameter = '+'.$queryParameters['full-text-search'];
+            $sqlMatchAgainst = "MATCH (`title`, `body`) AGAINST (? IN BOOLEAN MODE)";
+
+            $query
+                ->select($this->table.'.*')
+                ->selectRaw($sqlMatchAgainst.' AS rank', [$searchParameter])
+                ->whereRaw($sqlMatchAgainst, [$searchParameter])
+                ->orderBy('rank', 'desc');
+        }
 
         return runPaginatedQuery($query, $queryParameters);
     }

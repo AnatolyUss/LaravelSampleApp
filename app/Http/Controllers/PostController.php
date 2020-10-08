@@ -19,8 +19,7 @@ class PostController extends Controller
         return wrapControllerAction(function() use ($request) {
             $searchParameters = [
                 'user_id' => $request->query('user_id'),
-                'title' => $request->query('title'),
-                'body' => $request->query('body'),
+                'full-text-search' => $request->query('full-text-search'),
 
                 'limit' => $request->query('limit'),
                 'offset' => $request->query('offset'),
