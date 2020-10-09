@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Post;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,8 +14,21 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $numberOfUsers = 100;
+        $numberOfPostsPerUser = 33;
+        $faker = FakerFactory::create();
+
+        User::factory()
+            ->has(
+                Post::factory()
+                    ->count($numberOfPostsPerUser)
+                    ->state(function () use ($faker) {
+                        return ['created_at' => $faker->date];
+                    })
+            )
+            ->count($numberOfUsers)
+            ->create();
     }
 }
