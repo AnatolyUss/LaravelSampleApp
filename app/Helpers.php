@@ -14,40 +14,45 @@ if (!function_exists('runPaginatedQuery')) {
      * @param EloquentBuilder $builder
      * @param array $queryParameters
      * @return array
+     * @throw \Exception
      */
     function runPaginatedQuery(EloquentBuilder $builder, array $queryParameters): array
     {
         $defaultPageLimit = 5;
         $defaultPageOffset = 0;
-        $defaultOrderField = 'id';
-        $defaultOrderDirection = 'asc';
+        $defaultOrderFields = ['id'];
+        $defaultOrderDirections = ['asc'];
 
-        $limit = isset($searchParameters['limit'])
+        $limit = isset($queryParameters['limit'])
             ? $queryParameters['limit']
             : env('DB_DEFAULT_QUERY_LIMIT', $defaultPageLimit);
 
         $offset = isset($queryParameters['offset']) ? $queryParameters['offset'] : $defaultPageOffset;
 
-        $orderField = isset($queryParameters['orderField']) ? $queryParameters['orderField'] : $defaultOrderField;
+        $orderFields = isset($queryParameters['orderFields'])
+            ? explode(',', $queryParameters['orderFields'])
+            : $defaultOrderFields;
 
-        $orderDirection = isset($queryParameters['orderDirection'])
-            ? $queryParameters['orderDirection']
-            : $defaultOrderDirection;
+        $orderDirections = isset($queryParameters['orderDirections'])
+            ? explode(',', $queryParameters['orderDirections'])
+            : $defaultOrderDirections;
 
         $countBuilder = clone $builder;
         $sqlCount = 'SELECT COUNT(1) AS count FROM(%s) AS data;';
         $rawSqlCountQuery = sprintf($sqlCount, $countBuilder->toRawSql());
         $countResult = DB::select($rawSqlCountQuery);
 
-        $dataCollection = $builder
-            ->orderBy($orderField, $orderDirection)
-            ->limit($limit)
-            ->offset($offset)
-            ->get();
+        if (count($orderFields) !== count($orderDirections)) {
+            throw new \Exception('Amounts of orderFields and orderDirections must match.');
+        }
+
+        foreach ($orderFields as $index => $field) {
+            $builder->orderBy($field, $orderDirections[$index]);
+        }
 
         return [
             'dataCount' => $countResult[0]->count,
-            'dataCollection' => $dataCollection,
+            'dataCollection' => $builder->limit($limit)->offset($offset)->get(),
         ];
     }
 }

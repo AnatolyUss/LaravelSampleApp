@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
             return array_reduce($sqlBindings, function ($sql, $binding) {
                 $pattern = '/\?/';
-                $replacement = is_numeric($binding) ? $binding : "'" . $binding . "'";
+                $replacement = is_numeric($binding) ? $binding : "'".$binding."'";
                 $limit = 1;
 
                 return preg_replace($pattern, $replacement, $sql, $limit);

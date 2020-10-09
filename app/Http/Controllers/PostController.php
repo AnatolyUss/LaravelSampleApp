@@ -20,12 +20,8 @@ class PostController extends Controller
             $searchParameters = [
                 'user_id' => $request->query('user_id'),
                 'full-text-search' => $request->query('full-text-search'),
-
                 'limit' => $request->query('limit'),
                 'offset' => $request->query('offset'),
-
-                'orderField' => $request->query('orderField'),
-                'orderDirection' => $request->query('orderDirection'),
             ];
 
             $searchResult = (new Post)->search($searchParameters);

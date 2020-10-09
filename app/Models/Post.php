@@ -83,8 +83,10 @@ class Post extends Model
             $query
                 ->select($this->table.'.*')
                 ->selectRaw($sqlMatchAgainst.' AS rank', [$searchParameter])
-                ->whereRaw($sqlMatchAgainst, [$searchParameter])
-                ->orderBy('rank', 'desc');
+                ->whereRaw($sqlMatchAgainst, [$searchParameter]);
+
+            $queryParameters['orderFields'] = 'rank,id';
+            $queryParameters['orderDirections'] = 'desc,asc';
         }
 
         return runPaginatedQuery($query, $queryParameters);
