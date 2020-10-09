@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,6 @@ Route::prefix('api')->group(function () {
     Route::resources([
         'users' => UserController::class,
         'posts' => PostController::class,
+        'reports' => ReportController::class,
     ]);
 });

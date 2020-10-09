@@ -5,6 +5,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\IncorrectResourceIdException;
+use App\Lib\DB\PaginatedResponse;
 
 if (!function_exists('runPaginatedQuery')) {
     /**
@@ -13,10 +15,10 @@ if (!function_exists('runPaginatedQuery')) {
      *
      * @param EloquentBuilder $builder
      * @param array $queryParameters
-     * @return array
+     * @return PaginatedResponse
      * @throw \Exception
      */
-    function runPaginatedQuery(EloquentBuilder $builder, array $queryParameters): array
+    function runPaginatedQuery(EloquentBuilder $builder, array $queryParameters): PaginatedResponse
     {
         $defaultPageLimit = 5;
         $defaultPageOffset = 0;
@@ -50,10 +52,10 @@ if (!function_exists('runPaginatedQuery')) {
             $builder->orderBy($field, $orderDirections[$index]);
         }
 
-        return [
-            'dataCount' => $countResult[0]->count,
-            'dataCollection' => $builder->limit($limit)->offset($offset)->get(),
-        ];
+        return new PaginatedResponse(
+            $builder->limit($limit)->offset($offset)->get(),
+            $countResult[0]->count
+        );
     }
 }
 
@@ -85,6 +87,8 @@ if (!function_exists('wrapControllerAction')) {
 
         try {
             return $actionCallback();
+        } catch (IncorrectResourceIdException $exception) {
+            return $simplifiedExceptionHandler($exception, 400);
         } catch (ValidationException $exception) {
             return $simplifiedExceptionHandler($exception, 400);
         } catch (QueryException $exception) {

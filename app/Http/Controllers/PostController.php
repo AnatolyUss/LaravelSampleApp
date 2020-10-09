@@ -24,12 +24,12 @@ class PostController extends Controller
                 'offset' => $request->query('offset'),
             ];
 
-            $searchResult = (new Post)->search($searchParameters);
+            $paginatedResponse = (new Post)->search($searchParameters);
 
             return response()->json(
-                $searchResult['dataCollection'],
+                $paginatedResponse->dataCollection,
                 200,
-                ['X-Total-Count' => $searchResult['dataCount']]
+                ['X-Total-Count' => $paginatedResponse->dataCount]
             );
         });
     }

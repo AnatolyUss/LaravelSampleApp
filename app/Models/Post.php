@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Lib\DB\PaginatedResponse;
 
 class Post extends Model
 {
@@ -65,11 +66,11 @@ class Post extends Model
      * This approach seems to be more generic.
      *
      * @param array $queryParameters
-     * @return array
+     * @return PaginatedResponse
      */
-    public function search(array $queryParameters): array
+    public function search(array $queryParameters): PaginatedResponse
     {
-        $query = Post::query();
+        $query = static::query();
 
         if (isset($queryParameters['user_id'])) {
             $query->where('user_id', $queryParameters['user_id']);
@@ -90,16 +91,5 @@ class Post extends Model
         }
 
         return runPaginatedQuery($query, $queryParameters);
-    }
-
-    /**
-     * Return the average number of posts users created monthly and weekly.
-     *
-     * @param array $searchParameters
-     * @return array
-     */
-    public function getAveragePostsByUser(array $searchParameters): array
-    {
-        //
     }
 }
