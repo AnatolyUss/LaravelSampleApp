@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use App\Lib\DB\PaginatedResponse;
 
 class User extends Authenticatable
@@ -67,15 +68,36 @@ class User extends Authenticatable
      */
     public function getAvgActReport(array $queryParameters): PaginatedResponse
     {
-        $query = static::query();
+        $groupsNames = [];
 
-        //
+        foreach (['month', 'week'] as $group) {
+            $groupsNames[$group] = '
+                ROUND(
+                    IFNULL(
+                        (SELECT AVG(posts_count) FROM (
+                            SELECT COUNT(id) AS posts_count
+                            FROM `posts`
+                            WHERE outer_posts.user_id = user_id
+                            GROUP BY '.strtoupper($group).'(created_at)
+                        ) AS '.$group.'ly_posts),
+                        0
+                    ),
+                2) AS '.$group.'ly_count
+            ';
+        }
+
+        $query = static::query()
+            ->select([
+                'users.id AS user_id',
+                'name AS user_name',
+                DB::raw($groupsNames['month']),
+                DB::raw($groupsNames['week']),
+            ])
+            ->leftJoin('posts AS outer_posts', 'outer_posts.user_id', '=', 'users.id')
+            ->groupBy('users.id');
 
         if (isset($queryParameters['user_id'])) {
-            // No need for pagination, since "user_id" given.
-            $query
-                ->where('id', $queryParameters['user_id'])
-                ->get();
+            $query->where('id', $queryParameters['user_id']);
         }
 
         return runPaginatedQuery($query, $queryParameters);
